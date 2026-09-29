@@ -15,12 +15,13 @@
   "author": "Oleg Galaburda <burdiuz@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/burdiuz/codemirror-lang-icu-messageformat.git"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/icu-messageformat"
   },
   "bugs": {
-    "url": "https://github.com/burdiuz/codemirror-lang-icu-messageformat/issues"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
   },
-  "homepage": "https://github.com/burdiuz/codemirror-lang-icu-messageformat#readme",
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/icu-messageformat#readme",
   "scripts": {
     "test": "mocha test/test.js",
     "build": "rollup -c"

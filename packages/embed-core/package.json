@@ -4,6 +4,15 @@
   "description": "Shared parseMixed tag-embedding machinery for tagged-template DSL highlighting (sql/gql/css/etc inside JS/TSX)",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-core"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-core",
   "peerDependencies": {
     "@codemirror/language": "^6.0.0",
     "@lezer/common": "^1.0.0"

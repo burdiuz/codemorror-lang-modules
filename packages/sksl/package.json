@@ -14,12 +14,13 @@
   "author": "Oleg Galaburda <burdiuz@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/burdiuz/codemorror-lang-sksl.git"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/sksl"
   },
   "bugs": {
-    "url": "https://github.com/burdiuz/codemorror-lang-sksl/issues"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
   },
-  "homepage": "https://github.com/burdiuz/codemorror-lang-sksl#readme",
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/sksl#readme",
   "scripts": {
     "test": "mocha test/test.js",
     "build": "rollup -c"

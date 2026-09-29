@@ -15,12 +15,13 @@
   "author": "Oleg Galaburda <burdiuz@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/burdiuz/codemirror-lang-glsl.git"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/glsl"
   },
   "bugs": {
-    "url": "https://github.com/burdiuz/codemirror-lang-glsl/issues"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
   },
-  "homepage": "https://github.com/burdiuz/codemirror-lang-glsl#readme",
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/glsl#readme",
   "scripts": {
     "test": "mocha test/test.js",
     "build": "rollup -c"

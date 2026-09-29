@@ -4,6 +4,15 @@
   "description": "React / React Native contextual completion (imports, JSX tags/attributes, style properties) wired into the JS/TSX language",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-react-native"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-react-native",
   "dependencies": {
     "@actualwave/codemirror-lang-react-native": "*"
   },

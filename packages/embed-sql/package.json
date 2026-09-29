@@ -4,6 +4,15 @@
   "description": "Registers the `sql` tagged-template tag for embedded SQL highlighting inside JS/TSX",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-sql"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-sql",
   "dependencies": {
     "@actualwave/codemirror-lang-embed-core": "*"
   },

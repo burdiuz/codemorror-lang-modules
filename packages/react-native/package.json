@@ -13,12 +13,13 @@
   "author": "Oleg Galaburda <burdiuz@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/burdiuz/codemirror-lang-react-native.git"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/react-native"
   },
   "bugs": {
-    "url": "https://github.com/burdiuz/codemirror-lang-react-native/issues"
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
   },
-  "homepage": "https://github.com/burdiuz/codemirror-lang-react-native#readme",
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/react-native#readme",
   "scripts": {
     "build": "rollup -c"
   },

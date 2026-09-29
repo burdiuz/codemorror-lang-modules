@@ -4,6 +4,15 @@
   "description": "ICU MessageFormat syntax highlighting inside `t` tagged templates in JS/TSX",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-icu-messageformat"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-icu-messageformat",
   "dependencies": {
     "@actualwave/codemirror-lang-embed-core": "*"
   },

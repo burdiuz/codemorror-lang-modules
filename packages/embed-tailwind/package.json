@@ -4,6 +4,15 @@
   "description": "Tailwind (twrnc) class-name completion and category-colored highlighting inside `tw` tagged templates in JS/TSX",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-tailwind"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-tailwind",
   "dependencies": {
     "@actualwave/codemirror-lang-embed-core": "*"
   },

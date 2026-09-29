@@ -4,6 +4,15 @@
   "description": "Registers `css`/`styled.*`/`styled(...)` tagged-template tags for embedded CSS highlighting inside JS/TSX",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-css"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-css",
   "dependencies": {
     "@actualwave/codemirror-lang-embed-core": "*"
   },

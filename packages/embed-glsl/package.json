@@ -4,6 +4,15 @@
   "description": "GLSL syntax highlighting inside `glsl` tagged templates in JS/TSX",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/embed-glsl"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/embed-glsl",
   "dependencies": {
     "@actualwave/codemirror-lang-embed-core": "*"
   },
