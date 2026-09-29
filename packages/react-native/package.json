@@ -1,0 +1,57 @@
+{
+  "name": "@actualwave/codemirror-lang-react-native",
+  "version": "0.1.0",
+  "description": "React / React Native contextual completion (hooks, components, props, style properties, import clauses) for CodeMirror 6",
+  "keywords": [
+    "codemirror",
+    "codemirror6",
+    "react",
+    "react-native",
+    "autocomplete",
+    "completion"
+  ],
+  "author": "Oleg Galaburda <burdiuz@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemirror-lang-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemirror-lang-react-native/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemirror-lang-react-native#readme",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "type": "module",
+  "main": "index.cjs",
+  "module": "index.js",
+  "exports": {
+    "types": "./types/index.d.ts",
+    "import": "./index.js",
+    "require": "./index.cjs"
+  },
+  "types": "types/index.d.ts",
+  "sideEffects": false,
+  "peerDependencies": {
+    "@codemirror/autocomplete": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/state": "^6.0.0",
+    "@lezer/common": "^1.0.0"
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/language": "^6.10.0",
+    "@codemirror/state": "^6.4.0",
+    "@lezer/common": "^1.2.0",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/node": "^24.1.0",
+    "rollup": "^4.45.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
+  },
+  "license": "MIT"
+}

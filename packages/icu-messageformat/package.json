@@ -1,0 +1,60 @@
+{
+  "name": "@actualwave/codemirror-lang-icu-messageformat",
+  "version": "0.1.0",
+  "description": "ICU MessageFormat syntax support for CodeMirror 6",
+  "keywords": [
+    "codemirror",
+    "codemirror-language",
+    "icu",
+    "messageformat",
+    "i18n",
+    "l10n",
+    "syntax-highlighting",
+    "lezer"
+  ],
+  "author": "Oleg Galaburda <burdiuz@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemirror-lang-icu-messageformat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemirror-lang-icu-messageformat/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemirror-lang-icu-messageformat#readme",
+  "scripts": {
+    "test": "mocha test/test.js",
+    "build": "rollup -c"
+  },
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "type": "module",
+  "main": "index.cjs",
+  "module": "index.js",
+  "exports": {
+    "types": "./types/index.d.ts",
+    "import": "./index.js",
+    "require": "./index.cjs"
+  },
+  "types": "types/index.d.ts",
+  "sideEffects": false,
+  "peerDependencies": {
+    "@codemirror/autocomplete": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@lezer/highlight": "^1.0.0",
+    "@lezer/lr": "^1.0.0"
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@lezer/common": "^1.5.3",
+    "@lezer/generator": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/node": "^24.1.0",
+    "mocha": "^11.7.1",
+    "rollup": "^4.45.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
+  },
+  "license": "MIT"
+}

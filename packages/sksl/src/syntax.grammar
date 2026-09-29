@@ -1,0 +1,243 @@
+@top Program { topLevelItem* }
+
+@skip { whitespace | LineComment | BlockComment }
+
+// ── Top-level items ───────────────────────────────────────────────────────────
+
+topLevelItem {
+  UniformDecl |
+  FunctionDef |
+  StructDef |
+  VarDecl ";" |
+  PreprocessorDirective
+}
+
+// uniform float time;
+// uniform float2 resolution;
+UniformDecl {
+  kw<"uniform"> TypeName (ArraySuffix)? identifier ";"
+}
+
+// struct Foo { ... }
+StructDef {
+  kw<"struct"> identifier "{" structField* "}" ";"?
+}
+
+structField { (TypeName | identifier) (ArraySuffix)? identifier ";" }
+
+// half4 main(float2 fragCoord) { ... }
+FunctionDef {
+  TypeName identifier "(" paramList? ")" Block
+}
+
+paramList { param ("," param)* }
+param { TypeName (ArraySuffix)? identifier? }
+
+// ── Statements ────────────────────────────────────────────────────────────────
+
+statement {
+  Block |
+  ReturnStmt |
+  IfStmt |
+  ForStmt |
+  WhileStmt |
+  DoWhileStmt |
+  DiscardStmt |
+  BreakStmt |
+  ContinueStmt |
+  VarDecl ";" |
+  ExprStmt
+}
+
+Block { "{" statement* "}" }
+
+ReturnStmt  { kw<"return"> expression? ";" }
+DiscardStmt { kw<"discard"> ";" }
+BreakStmt   { kw<"break"> ";" }
+ContinueStmt { kw<"continue"> ";" }
+
+IfStmt {
+  kw<"if"> "(" expression ")" ~else statement
+  (~else kw<"else"> statement)?
+}
+
+ForStmt {
+  kw<"for"> "(" forInit expression? ";" expression? ")" statement
+}
+
+forInit {
+  VarDecl ";" |
+  ExprStmt |
+  ";"
+}
+
+WhileStmt   { kw<"while"> "(" expression ")" statement }
+DoWhileStmt { kw<"do"> statement kw<"while"> "(" expression ")" ";" }
+
+VarDecl { qualifier* TypeName ~tc (ArraySuffix)? declaratorList }
+declaratorList { declarator ("," declarator)* }
+declarator { identifier (ArraySuffix)? ("=" expression)? }
+
+ExprStmt { expression ";" }
+
+// ── Expressions ───────────────────────────────────────────────────────────────
+
+@precedence {
+  mul    @left,
+  add    @left,
+  shift  @left,
+  rel    @left,
+  eq     @left,
+  band   @left,
+  bxor   @left,
+  bor    @left,
+  land   @left,
+  lor    @left,
+  cond   @right,
+  assign @right
+}
+
+expression {
+  expression !mul    mulOp      expression |
+  expression !add    addOp      expression |
+  expression !shift  shiftOp    expression |
+  expression !rel    relOp      expression |
+  expression !eq     eqOp       expression |
+  expression !band   "&"        expression |
+  expression !bxor   "^"        expression |
+  expression !bor    "|"        expression |
+  expression !land   logicalAnd expression |
+  expression !lor    logicalOr  expression |
+  expression !cond   "?" expression ":" expression |
+  expression !assign assignOp   expression |
+  UnaryExpr
+}
+
+UnaryExpr {
+  PostfixExpr |
+  unaryOp UnaryExpr
+}
+
+PostfixExpr {
+  PrimaryExpr
+  (FieldAccess | IndexAccess | CallArgs | PostfixOp)*
+}
+
+FieldAccess { "." identifier }
+IndexAccess { "[" expression "]" }
+CallArgs    { "(" argList? ")" }
+argList { expression ("," expression)* }
+
+PrimaryExpr {
+  identifier |
+  TypeName ~tc |
+  Literal |
+  "(" expression ")"
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+
+ArraySuffix { "[" expression? "]" }
+
+// ── Tokens ────────────────────────────────────────────────────────────────────
+
+@tokens {
+  // Literals
+  Literal {
+    // float: 1.0  .5  1e3  1.5e-2  1.0f
+    $[0-9]+ "." $[0-9]* ($[eE] $[+\-]? $[0-9]+)? $[fF]? |
+    "." $[0-9]+ ($[eE] $[+\-]? $[0-9]+)? $[fF]? |
+    $[0-9]+ ($[eE] $[+\-]? $[0-9]+) $[fF]? |
+    // hex integer
+    "0x" $[0-9a-fA-F]+ "u"? |
+    // decimal / octal integer
+    $[0-9]+ "u"?
+  }
+
+  // Identifiers and keywords share the same character set
+  identifier { $[a-zA-Z_] $[a-zA-Z0-9_]* }
+
+  LineComment  { "//" ![\n]* }
+  BlockComment { "/*" blockCommentRest }
+  blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
+  blockCommentAfterStar { "/" | "*" blockCommentAfterStar | ![/*] blockCommentRest }
+
+  PreprocessorDirective { "#" ![\n]* }
+
+  whitespace { $[ \t\n\r]+ }
+
+  // Operators (longest-match order)
+  logicalOr  { "||" }
+  logicalAnd { "&&" }
+  eqOp       { "==" | "!=" }
+  relOp      { "<=" | ">=" | "<" | ">" }
+  shiftOp    { "<<" | ">>" }
+  addOp      { "+" | "-" }
+  mulOp      { "*" | "/" | "%" }
+  unaryOp    { "!" | "~" | "-" | "+" | "++" | "--" }
+  PostfixOp  { "++" | "--" }
+  assignOp   { "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | "&=" | "^=" | "|=" }
+
+  "(" ")" "{" "}" "[" "]" ";" "," "." "?" ":"
+
+  // Disambiguate overlapping token prefixes
+  @precedence { LineComment, BlockComment, assignOp, mulOp }
+  @precedence { logicalOr, assignOp, "|" }
+  @precedence { logicalAnd, assignOp, "&" }
+  @precedence { assignOp, "^" }
+  @precedence { eqOp, assignOp }
+  @precedence { eqOp, unaryOp }
+  @precedence { assignOp, shiftOp, relOp }
+  @precedence { PostfixOp, unaryOp, addOp }
+  @precedence { assignOp, addOp }
+}
+
+// ── Keywords ─────────────────────────────────────────────────────────────────
+
+// Built-in types only — user struct names are plain identifiers
+TypeName {
+  // scalar
+  kw<"void"> | kw<"bool"> | kw<"int"> | kw<"uint"> | kw<"float"> | kw<"double"> |
+  kw<"half"> |
+  // bool vectors
+  kw<"bool2"> | kw<"bool3"> | kw<"bool4"> |
+  kw<"bvec2"> | kw<"bvec3"> | kw<"bvec4"> |
+  // int vectors
+  kw<"int2"> | kw<"int3"> | kw<"int4"> |
+  kw<"ivec2"> | kw<"ivec3"> | kw<"ivec4"> |
+  // uint vectors
+  kw<"uint2"> | kw<"uint3"> | kw<"uint4"> |
+  kw<"uvec2"> | kw<"uvec3"> | kw<"uvec4"> |
+  // float vectors
+  kw<"float2"> | kw<"float3"> | kw<"float4"> |
+  kw<"vec2">   | kw<"vec3">   | kw<"vec4"> |
+  // half vectors
+  kw<"half2"> | kw<"half3"> | kw<"half4"> |
+  // double vectors
+  kw<"double2"> | kw<"double3"> | kw<"double4"> |
+  kw<"dvec2">   | kw<"dvec3">   | kw<"dvec4"> |
+  // float matrices
+  kw<"float2x2"> | kw<"float3x3"> | kw<"float4x4"> |
+  kw<"float2x3"> | kw<"float2x4"> |
+  kw<"float3x2"> | kw<"float3x4"> |
+  kw<"float4x2"> | kw<"float4x3"> |
+  kw<"mat2"> | kw<"mat3"> | kw<"mat4"> |
+  kw<"mat2x2"> | kw<"mat2x3"> | kw<"mat2x4"> |
+  kw<"mat3x2"> | kw<"mat3x3"> | kw<"mat3x4"> |
+  kw<"mat4x2"> | kw<"mat4x3"> | kw<"mat4x4"> |
+  // half matrices
+  kw<"half2x2"> | kw<"half3x3"> | kw<"half4x4"> |
+  // samplers / shaders
+  kw<"shader"> | kw<"colorFilter"> | kw<"blender"> |
+  kw<"sampler2D"> | kw<"samplerCube">
+}
+
+qualifier {
+  kw<"const"> | kw<"in"> | kw<"out"> | kw<"inout"> | kw<"flat"> | kw<"noperspective">
+}
+
+kw<term> { @specialize[@name={term}] <identifier, term> }
+
+@external propSource skslHighlighting from "./highlight"
+
+@detectDelim

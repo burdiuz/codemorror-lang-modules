@@ -1,0 +1,95 @@
+# Plain text
+
+Hello world
+
+==>
+
+Program(Message(Text))
+
+# Positional argument
+
+You have {0} items
+
+==>
+
+Program(Message(Text,Argument("{",ArgName,"}"),Text))
+
+# Named argument
+
+Hello {name}
+
+==>
+
+Program(Message(Text,Argument("{",ArgName,"}")))
+
+# Typed argument
+
+The value is {count, number}
+
+==>
+
+Program(Message(Text,Argument("{",ArgName,",",SimpleArg(ArgType(number)),"}")))
+
+# Typed argument with style
+
+Price: {price, number, ::currency/USD}
+
+==>
+
+Program(Message(Text,Argument("{",ArgName,",",SimpleArg(ArgType(number),",",ArgStyle),"}")))
+
+# Quoted literal brace
+
+Use '{' to start an argument.
+
+==>
+
+Program(Message(Text,QuotedLiteral,Text))
+
+# Escaped apostrophe
+
+It''s working
+
+==>
+
+Program(Message(Text,EscapedApos,Text))
+
+# Plural with exact value and cases
+
+{count, plural, =0 {no messages} one {# message} other {# messages}}
+
+==>
+
+Program(Message(Argument("{",ArgName,",",PluralArg(plural,",",PluralCase(ExactValue("="),"{",Message(Text),"}"),PluralCase(one,"{",Message(PoundSign,Text),"}"),PluralCase(other,"{",Message(PoundSign,Text),"}")),"}")))
+
+# Plural with offset clause
+
+{count, plural, offset:1 =0 {no messages} one {# message} other {# messages}}
+
+==>
+
+Program(Message(Argument("{",ArgName,",",PluralArg(plural,",",OffsetClause(offset,":"),PluralCase(ExactValue("="),"{",Message(Text),"}"),PluralCase(one,"{",Message(PoundSign,Text),"}"),PluralCase(other,"{",Message(PoundSign,Text),"}")),"}")))
+
+# Selectordinal
+
+{rank, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}
+
+==>
+
+Program(Message(Argument("{",ArgName,",",PluralArg(selectordinal,",",PluralCase(one,"{",Message(PoundSign,Text),"}"),PluralCase(two,"{",Message(PoundSign,Text),"}"),PluralCase(few,"{",Message(PoundSign,Text),"}"),PluralCase(other,"{",Message(PoundSign,Text),"}")),"}")))
+
+# Select
+
+{gender, select, male {He} female {She} other {They}}
+
+==>
+
+Program(Message(Argument("{",ArgName,",",SelectArg(select,",",SelectCase("{",Message(Text),"}"),SelectCase("{",Message(Text),"}"),SelectCase(other,"{",Message(Text),"}")),"}")))
+
+# Keyword usable as an ordinary argument name
+
+{plural, number}
+
+==>
+
+Program(Message(Argument("{",ArgName,",",SimpleArg(ArgType(number)),"}")))

@@ -1,0 +1,11 @@
+{
+  "name": "@actualwave/codemirror-lang-embed-core",
+  "version": "0.1.0",
+  "description": "Shared parseMixed tag-embedding machinery for tagged-template DSL highlighting (sql/gql/css/etc inside JS/TSX)",
+  "main": "index.js",
+  "license": "MIT",
+  "peerDependencies": {
+    "@codemirror/language": "^6.0.0",
+    "@lezer/common": "^1.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "codemirror-lang-modules",
+  "private": true,
+  "description": "Monorepo for @actualwave CodeMirror 6 language packages (Lezer grammars).",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "author": "Oleg Galaburda <burdiuz@gmail.com> (https://github.com/burdiuz)",
+  "license": "MIT"
+}

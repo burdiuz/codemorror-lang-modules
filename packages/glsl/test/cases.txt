@@ -1,0 +1,114 @@
+# Preprocessor directive
+
+#version 300 es
+
+==>
+
+Program(PreprocessorDirective)
+
+# Precision statement
+
+precision highp float;
+
+==>
+
+Program(PrecisionStmt(precision,highp,TypeName(float)))
+
+# Layout qualifier
+
+layout(location = 0) in vec4 position;
+
+==>
+
+Program(VarDecl(LayoutQualifier(layout,Literal),in,TypeName(vec4)))
+
+# Uniform declaration
+
+uniform float time;
+
+==>
+
+Program(VarDecl(uniform,TypeName(float)))
+
+# Variable declaration
+
+float x;
+
+==>
+
+Program(VarDecl(TypeName(float)))
+
+# Variable with initializer
+
+float y = 1.0;
+
+==>
+
+Program(VarDecl(TypeName(float),UnaryExpr(PostfixExpr(PrimaryExpr(Literal)))))
+
+# Boolean literal
+
+bool flag = true;
+
+==>
+
+Program(VarDecl(TypeName(bool),UnaryExpr(PostfixExpr(PrimaryExpr(BoolLiteral(true))))))
+
+# Struct definition
+
+struct Light { vec3 position; float intensity; };
+
+==>
+
+Program(StructDef(struct,TypeName(vec3),TypeName(float)))
+
+# Struct with instance declarator
+
+struct Light { vec3 position; } sun;
+
+==>
+
+Program(StructDef(struct,TypeName(vec3)))
+
+# Function prototype
+
+float square(float x);
+
+==>
+
+Program(FunctionProto(TypeName(float),TypeName(float)))
+
+# Empty function
+
+void foo() {}
+
+==>
+
+Program(FunctionDef(TypeName(void),Block))
+
+# If statement
+
+void foo() { if (x > 0.0) { discard; } }
+
+==>
+
+Program(FunctionDef(TypeName(void),Block(IfStmt(if,UnaryExpr(PostfixExpr(PrimaryExpr)),UnaryExpr(PostfixExpr(PrimaryExpr(Literal))),Block(DiscardStmt(discard))))))
+
+# Switch statement
+
+void foo() { switch (i) { case 0: break; default: break; } }
+
+==>
+
+Program(FunctionDef(TypeName(void),Block(SwitchStmt(switch,UnaryExpr(PostfixExpr(PrimaryExpr)),case,UnaryExpr(PostfixExpr(PrimaryExpr(Literal))),BreakStmt(break),default,BreakStmt(break)))))
+
+# Fragment shader main
+
+void main() {
+  vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
+  gl_FragColor = color;
+}
+
+==>
+
+Program(FunctionDef(TypeName(void),Block(VarDecl(TypeName(vec4),UnaryExpr(PostfixExpr(PrimaryExpr(TypeName(vec4)),CallArgs(UnaryExpr(PostfixExpr(PrimaryExpr(Literal))),UnaryExpr(PostfixExpr(PrimaryExpr(Literal))),UnaryExpr(PostfixExpr(PrimaryExpr(Literal))),UnaryExpr(PostfixExpr(PrimaryExpr(Literal))))))),ExprStmt(UnaryExpr(PostfixExpr(PrimaryExpr)),UnaryExpr(PostfixExpr(PrimaryExpr))))))

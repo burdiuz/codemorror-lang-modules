@@ -1,0 +1,259 @@
+@top Program { topLevelItem* }
+
+@skip { whitespace | LineComment | BlockComment }
+
+// ── Top-level items ───────────────────────────────────────────────────────────
+
+topLevelItem {
+  FunctionDef |
+  FunctionProto ";" |
+  StructDef |
+  PrecisionStmt |
+  VarDecl ";" |
+  ";" |
+  PreprocessorDirective
+}
+
+// struct Foo { ... };  /  struct Foo { ... } instance;
+StructDef {
+  kw<"struct"> identifier "{" structField* "}" declaratorList? ";"
+}
+
+structField { precisionQualifier? (TypeName | identifier) (ArraySuffix)? identifier (ArraySuffix)? ";" }
+
+// float foo(float x) { ... }
+FunctionDef {
+  TypeName identifier "(" paramList? ")" Block
+}
+
+// float foo(float x);
+FunctionProto {
+  TypeName identifier "(" paramList? ")"
+}
+
+paramList { param ("," param)* }
+param { paramQualifier* TypeName (ArraySuffix)? identifier? (ArraySuffix)? }
+paramQualifier { kw<"const"> | kw<"in"> | kw<"out"> | kw<"inout"> | precisionQualifier }
+
+// precision highp float;
+PrecisionStmt { kw<"precision"> precisionQualifier TypeName ";" }
+
+// ── Statements ────────────────────────────────────────────────────────────────
+
+statement {
+  Block |
+  ReturnStmt |
+  IfStmt |
+  ForStmt |
+  WhileStmt |
+  DoWhileStmt |
+  SwitchStmt |
+  DiscardStmt |
+  BreakStmt |
+  ContinueStmt |
+  VarDecl ";" |
+  ExprStmt |
+  ";"
+}
+
+Block { "{" statement* "}" }
+
+ReturnStmt   { kw<"return"> expression? ";" }
+DiscardStmt  { kw<"discard"> ";" }
+BreakStmt    { kw<"break"> ";" }
+ContinueStmt { kw<"continue"> ";" }
+
+IfStmt {
+  kw<"if"> "(" expression ")" ~else statement
+  (~else kw<"else"> statement)?
+}
+
+ForStmt {
+  kw<"for"> "(" forInit expression? ";" expression? ")" statement
+}
+
+forInit {
+  VarDecl ";" |
+  ExprStmt |
+  ";"
+}
+
+WhileStmt   { kw<"while"> "(" expression ")" statement }
+DoWhileStmt { kw<"do"> statement kw<"while"> "(" expression ")" ";" }
+
+SwitchStmt { kw<"switch"> "(" expression ")" "{" switchCase* "}" }
+switchCase {
+  (kw<"case"> expression ":" | kw<"default"> ":") statement*
+}
+
+VarDecl { qualifier* TypeName ~tc (ArraySuffix)? declaratorList }
+declaratorList { declarator ("," declarator)* }
+declarator { identifier (ArraySuffix)? ("=" expression)? }
+
+ExprStmt { expression ";" }
+
+// ── Qualifiers ────────────────────────────────────────────────────────────────
+
+// layout(location = 0) in vec4 position;
+LayoutQualifier { kw<"layout"> "(" layoutList? ")" }
+layoutList { layoutItem ("," layoutItem)* }
+layoutItem { identifier ("=" Literal)? }
+
+storageQualifier {
+  kw<"const"> | kw<"in"> | kw<"out"> | kw<"inout"> |
+  kw<"attribute"> | kw<"varying"> | kw<"uniform"> |
+  kw<"centroid"> | kw<"flat"> | kw<"smooth"> | kw<"noperspective"> |
+  kw<"invariant"> | kw<"precise">
+}
+
+precisionQualifier { kw<"highp"> | kw<"mediump"> | kw<"lowp"> }
+
+qualifier { LayoutQualifier | storageQualifier | precisionQualifier }
+
+// ── Expressions ───────────────────────────────────────────────────────────────
+
+@precedence {
+  mul    @left,
+  add    @left,
+  shift  @left,
+  rel    @left,
+  eq     @left,
+  band   @left,
+  bxor   @left,
+  bor    @left,
+  land   @left,
+  lor    @left,
+  cond   @right,
+  assign @right
+}
+
+expression {
+  expression !mul    mulOp      expression |
+  expression !add    addOp      expression |
+  expression !shift  shiftOp    expression |
+  expression !rel    relOp      expression |
+  expression !eq     eqOp       expression |
+  expression !band   "&"        expression |
+  expression !bxor   "^"        expression |
+  expression !bor    "|"        expression |
+  expression !land   logicalAnd expression |
+  expression !lor    logicalOr  expression |
+  expression !cond   "?" expression ":" expression |
+  expression !assign assignOp   expression |
+  UnaryExpr
+}
+
+UnaryExpr {
+  PostfixExpr |
+  unaryOp UnaryExpr
+}
+
+PostfixExpr {
+  PrimaryExpr
+  (FieldAccess | IndexAccess | CallArgs | PostfixOp)*
+}
+
+FieldAccess { "." identifier }
+IndexAccess { "[" expression "]" }
+CallArgs    { "(" argList? ")" }
+argList { expression ("," expression)* }
+
+PrimaryExpr {
+  identifier |
+  TypeName ~tc |
+  Literal |
+  BoolLiteral |
+  "(" expression ")"
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+
+ArraySuffix { "[" expression? "]" }
+
+// ── Tokens ────────────────────────────────────────────────────────────────────
+
+@tokens {
+  // Literals
+  Literal {
+    // float: 1.0  .5  1e3  1.5e-2  1.0f
+    $[0-9]+ "." $[0-9]* ($[eE] $[+\-]? $[0-9]+)? $[fF]? |
+    "." $[0-9]+ ($[eE] $[+\-]? $[0-9]+)? $[fF]? |
+    $[0-9]+ ($[eE] $[+\-]? $[0-9]+) $[fF]? |
+    // hex integer
+    "0x" $[0-9a-fA-F]+ $[uU]? |
+    // decimal / octal integer
+    $[0-9]+ $[uU]?
+  }
+
+  // Identifiers and keywords share the same character set
+  identifier { $[a-zA-Z_] $[a-zA-Z0-9_]* }
+
+  LineComment  { "//" (![\n\\] | "\\" ![\n]?)* }
+  BlockComment { "/*" blockCommentRest }
+  blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
+  blockCommentAfterStar { "/" | "*" blockCommentAfterStar | ![/*] blockCommentRest }
+
+  // "#" directive, allowing a trailing backslash to continue onto the next line
+  // (common for multi-line #define macros).
+  PreprocessorDirective { "#" (![\n\\] | "\\" ![\n]?)* }
+
+  whitespace { $[ \t\n\r]+ }
+
+  // Operators (longest-match order)
+  logicalOr  { "||" }
+  logicalAnd { "&&" }
+  eqOp       { "==" | "!=" }
+  relOp      { "<=" | ">=" | "<" | ">" }
+  shiftOp    { "<<" | ">>" }
+  addOp      { "+" | "-" }
+  mulOp      { "*" | "/" | "%" }
+  unaryOp    { "!" | "~" | "-" | "+" | "++" | "--" }
+  PostfixOp  { "++" | "--" }
+  assignOp   { "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | "&=" | "^=" | "|=" }
+
+  "(" ")" "{" "}" "[" "]" ";" "," "." "?" ":"
+
+  // Disambiguate overlapping token prefixes
+  @precedence { LineComment, BlockComment, assignOp, mulOp }
+  @precedence { logicalOr, assignOp, "|" }
+  @precedence { logicalAnd, assignOp, "&" }
+  @precedence { assignOp, "^" }
+  @precedence { eqOp, assignOp }
+  @precedence { eqOp, unaryOp }
+  @precedence { assignOp, shiftOp, relOp }
+  @precedence { PostfixOp, unaryOp, addOp }
+  @precedence { assignOp, addOp }
+}
+
+// ── Keywords ─────────────────────────────────────────────────────────────────
+
+// Built-in types only — user struct names are plain identifiers
+TypeName {
+  // scalar
+  kw<"void"> | kw<"bool"> | kw<"int"> | kw<"uint"> | kw<"float"> |
+  // vectors
+  kw<"vec2">  | kw<"vec3">  | kw<"vec4">  |
+  kw<"bvec2"> | kw<"bvec3"> | kw<"bvec4"> |
+  kw<"ivec2"> | kw<"ivec3"> | kw<"ivec4"> |
+  kw<"uvec2"> | kw<"uvec3"> | kw<"uvec4"> |
+  // matrices
+  kw<"mat2">   | kw<"mat3">   | kw<"mat4"> |
+  kw<"mat2x2"> | kw<"mat2x3"> | kw<"mat2x4"> |
+  kw<"mat3x2"> | kw<"mat3x3"> | kw<"mat3x4"> |
+  kw<"mat4x2"> | kw<"mat4x3"> | kw<"mat4x4"> |
+  // samplers
+  kw<"sampler2D">           | kw<"samplerCube">        |
+  kw<"sampler3D">           | kw<"sampler2DArray">     |
+  kw<"sampler2DShadow">     | kw<"samplerCubeShadow">  |
+  kw<"sampler2DArrayShadow"> |
+  kw<"isampler2D">  | kw<"isampler3D">  | kw<"isamplerCube">  | kw<"isampler2DArray">  |
+  kw<"usampler2D">  | kw<"usampler3D">  | kw<"usamplerCube">  | kw<"usampler2DArray">
+}
+
+BoolLiteral { kw<"true"> | kw<"false"> }
+
+kw<term> { @specialize[@name={term}] <identifier, term> }
+
+@external propSource glslHighlighting from "./highlight"
+
+@detectDelim

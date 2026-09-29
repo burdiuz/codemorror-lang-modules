@@ -1,0 +1,13 @@
+{
+  "name": "@actualwave/codemirror-lang-embed-graphql",
+  "version": "0.1.0",
+  "description": "Registers the `gql` tagged-template tag for embedded GraphQL highlighting inside JS/TSX",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actualwave/codemirror-lang-embed-core": "*"
+  },
+  "peerDependencies": {
+    "cm6-graphql": "^0.2.0"
+  }
+}

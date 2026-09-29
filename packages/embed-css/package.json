@@ -1,0 +1,13 @@
+{
+  "name": "@actualwave/codemirror-lang-embed-css",
+  "version": "0.1.0",
+  "description": "Registers `css`/`styled.*`/`styled(...)` tagged-template tags for embedded CSS highlighting inside JS/TSX",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actualwave/codemirror-lang-embed-core": "*"
+  },
+  "peerDependencies": {
+    "@codemirror/lang-css": "^6.0.0"
+  }
+}

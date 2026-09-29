@@ -1,0 +1,13 @@
+{
+  "name": "@actualwave/codemirror-lang-embed-glsl",
+  "version": "0.1.0",
+  "description": "GLSL syntax highlighting inside `glsl` tagged templates in JS/TSX",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actualwave/codemirror-lang-embed-core": "*"
+  },
+  "peerDependencies": {
+    "@actualwave/codemirror-lang-glsl": "^0.1.0"
+  }
+}

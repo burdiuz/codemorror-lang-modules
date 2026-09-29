@@ -1,0 +1,55 @@
+# Preprocessor directive
+
+#define FOO 1
+
+==>
+
+Program(PreprocessorDirective)
+
+# Empty function
+
+void foo() {}
+
+==>
+
+Program(FunctionDef(TypeName(void),Block))
+
+# Uniform declaration
+
+uniform float time;
+
+==>
+
+Program(UniformDecl(uniform,TypeName(float)))
+
+# Variable declaration
+
+float x;
+
+==>
+
+Program(VarDecl(TypeName(float)))
+
+# Variable with initializer
+
+float y = 1.0;
+
+==>
+
+Program(VarDecl(TypeName(float),UnaryExpr(PostfixExpr(PrimaryExpr(Literal)))))
+
+# Struct definition
+
+struct Foo { float x; };
+
+==>
+
+Program(StructDef(struct,TypeName(float)))
+
+# If statement
+
+void foo() { if (x > 0.0) { discard; } }
+
+==>
+
+Program(FunctionDef(TypeName(void),Block(IfStmt(if,UnaryExpr(PostfixExpr(PrimaryExpr)),UnaryExpr(PostfixExpr(PrimaryExpr(Literal))),Block(DiscardStmt(discard))))))

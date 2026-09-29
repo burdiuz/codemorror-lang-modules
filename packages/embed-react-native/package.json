@@ -1,0 +1,15 @@
+{
+  "name": "@actualwave/codemirror-lang-embed-react-native",
+  "version": "0.1.0",
+  "description": "React / React Native contextual completion (imports, JSX tags/attributes, style properties) wired into the JS/TSX language",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actualwave/codemirror-lang-react-native": "*"
+  },
+  "peerDependencies": {
+    "@codemirror/autocomplete": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/state": "^6.0.0"
+  }
+}

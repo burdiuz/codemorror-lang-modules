@@ -1,0 +1,13 @@
+{
+  "name": "@actualwave/codemirror-lang-embed-sksl",
+  "version": "0.1.0",
+  "description": "Registers the `sksl` tagged-template tag for embedded SKSL shader highlighting inside JS/TSX",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actualwave/codemirror-lang-embed-core": "*"
+  },
+  "peerDependencies": {
+    "@actualwave/codemirror-lang-sksl": "^0.1.0"
+  }
+}
