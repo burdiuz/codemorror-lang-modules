@@ -12,6 +12,7 @@ import {createEmbedding as createSkslEmbedding} from '@actualwave/codemirror-lan
 import {createEmbedding as createIcuEmbedding} from '@actualwave/codemirror-lang-embed-icu-messageformat'
 import {createSupportExtension as createTailwindSupport} from '@actualwave/codemirror-lang-embed-tailwind'
 import {createSupportExtension as createReactNativeSupport} from '@actualwave/codemirror-lang-embed-react-native'
+import {createSupportExtension as createJsCompletionSupport} from '@actualwave/codemirror-lang-js-completion'
 
 // Each entry is either a tagged-template embedding (`tag`: returns
 // { matcher, language, extension }) or a support extension (`support`: receives
@@ -64,6 +65,12 @@ const EMBEDS = [
     label: 'React Native completion',
     usage: 'imports, JSX props, StyleSheet.create',
     support: (js) => createReactNativeSupport(js),
+  },
+  {
+    id: 'js-completion',
+    label: 'JS globals & members',
+    usage: 'setTimeout, Math., "abc".trim(), [].map, this.',
+    support: (js) => createJsCompletionSupport(js),
   },
 ]
 
@@ -129,6 +136,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
+
+// JS completion: try typing after the dots, e.g. text.  words.  Math.  this.
+const text = '  Hello  ';
+const words = text.trim().split(' ');
+const cache = new Map();
+const point = {x: 1, y: 2, move() {}};
+class Counter {
+  items = [];
+  add(item) {
+    this.items.push(item);
+  }
+}
+setTimeout(() => cache.set('words', words), 100);
 
 // React Native completion: try typing inside <View style={{ or <Text …
 export function App({count}) {

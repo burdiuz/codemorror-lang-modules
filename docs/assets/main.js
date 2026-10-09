@@ -27067,6 +27067,869 @@ var require_embed_react_native = __commonJS({
   }
 });
 
+// packages/js-completion/types.js
+var require_types = __commonJS({
+  "packages/js-completion/types.js"(exports, module) {
+    var STRING_RETURNS = {
+      String: [
+        "at",
+        "charAt",
+        "concat",
+        "normalize",
+        "padEnd",
+        "padStart",
+        "repeat",
+        "replace",
+        "replaceAll",
+        "slice",
+        "substr",
+        "substring",
+        "toLocaleLowerCase",
+        "toLocaleUpperCase",
+        "toLowerCase",
+        "toString",
+        "toUpperCase",
+        "toWellFormed",
+        "trim",
+        "trimEnd",
+        "trimLeft",
+        "trimRight",
+        "trimStart",
+        "valueOf"
+      ],
+      Number: [
+        "charCodeAt",
+        "codePointAt",
+        "indexOf",
+        "lastIndexOf",
+        "localeCompare",
+        "search"
+      ],
+      Boolean: ["endsWith", "includes", "isWellFormed", "startsWith"],
+      Array: ["match", "split"]
+    };
+    var ARRAY_RETURNS = {
+      Array: [
+        "concat",
+        "copyWithin",
+        "fill",
+        "filter",
+        "flat",
+        "flatMap",
+        "map",
+        "reverse",
+        "slice",
+        "sort",
+        "splice",
+        "toReversed",
+        "toSorted",
+        "toSpliced",
+        "with"
+      ],
+      String: ["join", "toLocaleString", "toString"],
+      Number: ["findIndex", "findLastIndex", "indexOf", "lastIndexOf", "push", "unshift"],
+      Boolean: ["every", "includes", "some"]
+    };
+    function invert(byType) {
+      const out = {};
+      for (const [type, names] of Object.entries(byType)) {
+        for (const name2 of names) out[name2] = type;
+      }
+      return out;
+    }
+    var METHOD_RETURNS = {
+      String: invert(STRING_RETURNS),
+      Array: invert(ARRAY_RETURNS),
+      Number: invert({
+        String: ["toExponential", "toFixed", "toLocaleString", "toPrecision", "toString"],
+        Number: ["valueOf"]
+      }),
+      BigInt: invert({ String: ["toLocaleString", "toString"], BigInt: ["valueOf"] }),
+      Boolean: invert({ String: ["toString"], Boolean: ["valueOf"] }),
+      Map: invert({ Map: ["set"], Boolean: ["delete", "has"] }),
+      Set: invert({ Set: ["add"], Boolean: ["delete", "has"] }),
+      WeakMap: invert({ WeakMap: ["set"], Boolean: ["delete", "has"] }),
+      WeakSet: invert({ WeakSet: ["add"], Boolean: ["delete", "has"] }),
+      RegExp: invert({ Boolean: ["test"], Array: ["exec"], String: ["toString"] }),
+      Promise: invert({ Promise: ["catch", "finally", "then"] }),
+      Function: invert({ Function: ["bind"], String: ["toString"] }),
+      Error: invert({ String: ["toString"] }),
+      URL: invert({ String: ["toJSON", "toString"] }),
+      URLSearchParams: invert({ Boolean: ["has"], String: ["get", "toString"], Array: ["getAll"] }),
+      Object: invert({
+        Boolean: ["hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"],
+        String: ["toLocaleString", "toString"]
+      })
+    };
+    function dateMethodReturn(name2) {
+      if (/^(get|set)/.test(name2) || name2 === "valueOf") return "Number";
+      if (/^to.*String$|^toJSON$/.test(name2)) return "String";
+      return null;
+    }
+    var PROPERTY_TYPES = {
+      String: { length: "Number" },
+      Array: { length: "Number" },
+      Function: { length: "Number", name: "String" },
+      Map: { size: "Number" },
+      Set: { size: "Number" },
+      RegExp: {
+        source: "String",
+        flags: "String",
+        lastIndex: "Number",
+        global: "Boolean",
+        ignoreCase: "Boolean",
+        multiline: "Boolean",
+        sticky: "Boolean"
+      },
+      Error: { message: "String", name: "String", stack: "String" },
+      URL: {
+        hash: "String",
+        host: "String",
+        hostname: "String",
+        href: "String",
+        origin: "String",
+        password: "String",
+        pathname: "String",
+        port: "String",
+        protocol: "String",
+        search: "String",
+        searchParams: "URLSearchParams",
+        username: "String"
+      }
+    };
+    var STATIC_RETURNS = {
+      Array: { from: "Array", of: "Array", isArray: "Boolean" },
+      Object: {
+        assign: "@arg0",
+        create: "Object",
+        entries: "Array",
+        freeze: "@arg0",
+        fromEntries: "Object",
+        getOwnPropertyNames: "Array",
+        getOwnPropertySymbols: "Array",
+        hasOwn: "Boolean",
+        is: "Boolean",
+        isExtensible: "Boolean",
+        isFrozen: "Boolean",
+        isSealed: "Boolean",
+        keys: "Array",
+        preventExtensions: "@arg0",
+        seal: "@arg0",
+        values: "Array"
+      },
+      JSON: { stringify: "String" },
+      Math: { "*": "Number" },
+      Number: {
+        isFinite: "Boolean",
+        isInteger: "Boolean",
+        isNaN: "Boolean",
+        isSafeInteger: "Boolean",
+        "*": "Number"
+      },
+      String: { fromCharCode: "String", fromCodePoint: "String", raw: "String" },
+      Date: { now: "Number", parse: "Number", UTC: "Number" },
+      Promise: {
+        all: "Promise",
+        allSettled: "Promise",
+        any: "Promise",
+        race: "Promise",
+        reject: "Promise",
+        resolve: "Promise",
+        withResolvers: "Object"
+      },
+      BigInt: { asIntN: "BigInt", asUintN: "BigInt" }
+    };
+    var GLOBAL_CALL_RETURNS = {
+      Array: "Array",
+      BigInt: "BigInt",
+      Boolean: "Boolean",
+      Number: "Number",
+      Object: "Object",
+      String: "String",
+      decodeURI: "String",
+      decodeURIComponent: "String",
+      encodeURI: "String",
+      encodeURIComponent: "String",
+      fetch: "Promise",
+      isFinite: "Boolean",
+      isNaN: "Boolean",
+      parseFloat: "Number",
+      parseInt: "Number"
+    };
+    var TS_KEYWORD_TYPES = {
+      bigint: "BigInt",
+      boolean: "Boolean",
+      number: "Number",
+      object: "Object",
+      string: "String"
+    };
+    var HIDDEN_MEMBERS = /* @__PURE__ */ new Set([
+      "constructor",
+      "caller",
+      "callee",
+      "arguments",
+      "toSource",
+      "unwatch",
+      "watch"
+    ]);
+    var HIDDEN_STATICS = /* @__PURE__ */ new Set(["prototype", "length", "name", "caller", "arguments"]);
+    var DEFAULT_GLOBALS = [
+      "Object",
+      "Array",
+      "String",
+      "Number",
+      "Boolean",
+      "Symbol",
+      "BigInt",
+      "Math",
+      "JSON",
+      "Date",
+      "RegExp",
+      "Map",
+      "Set",
+      "WeakMap",
+      "WeakSet",
+      "Promise",
+      "Proxy",
+      "Reflect",
+      "Intl",
+      "Error",
+      "TypeError",
+      "RangeError",
+      "SyntaxError",
+      "ReferenceError",
+      "parseInt",
+      "parseFloat",
+      "isNaN",
+      "isFinite",
+      "NaN",
+      "Infinity",
+      "undefined",
+      "encodeURIComponent",
+      "decodeURIComponent",
+      "encodeURI",
+      "decodeURI",
+      "setTimeout",
+      "clearTimeout",
+      "setInterval",
+      "clearInterval",
+      "queueMicrotask",
+      "structuredClone",
+      "console",
+      "fetch",
+      "URL",
+      "URLSearchParams"
+    ];
+    module.exports = {
+      METHOD_RETURNS,
+      PROPERTY_TYPES,
+      STATIC_RETURNS,
+      GLOBAL_CALL_RETURNS,
+      TS_KEYWORD_TYPES,
+      HIDDEN_MEMBERS,
+      HIDDEN_STATICS,
+      DEFAULT_GLOBALS,
+      dateMethodReturn
+    };
+  }
+});
+
+// packages/js-completion/infer.js
+var require_infer = __commonJS({
+  "packages/js-completion/infer.js"(exports, module) {
+    var {
+      METHOD_RETURNS,
+      PROPERTY_TYPES,
+      STATIC_RETURNS,
+      GLOBAL_CALL_RETURNS,
+      TS_KEYWORD_TYPES,
+      dateMethodReturn
+    } = require_types();
+    var MAX_DEPTH = 16;
+    function createContext(state, scope) {
+      return {
+        scope: scope || {},
+        read: (node) => state.sliceDoc(node.from, node.to),
+        depth: 0,
+        active: /* @__PURE__ */ new Set()
+      };
+    }
+    function instance(type) {
+      return type ? { kind: "instance", type } : null;
+    }
+    function isBuiltinType(name2) {
+      if (!/^[A-Z]/.test(name2)) return false;
+      const ctor = globalThis[name2];
+      return typeof ctor === "function" && ctor.prototype != null;
+    }
+    function hasOwn(object, key) {
+      return Object.prototype.hasOwnProperty.call(object, key);
+    }
+    function childNamed(node, name2) {
+      for (let child = node.firstChild; child; child = child.nextSibling) {
+        if (child.name === name2) return child;
+      }
+      return null;
+    }
+    function innerOf(parenthesized) {
+      for (let child = parenthesized.firstChild; child; child = child.nextSibling) {
+        if (child.name !== "(" && child.name !== ")") return child;
+      }
+      return null;
+    }
+    function propertyNameOf(memberExpression, ctx) {
+      const last2 = memberExpression.lastChild;
+      return last2 && last2.name === "PropertyName" ? ctx.read(last2) : null;
+    }
+    function firstArgument(callExpression) {
+      const args = childNamed(callExpression, "ArgList");
+      if (!args) return null;
+      for (let child = args.firstChild; child; child = child.nextSibling) {
+        if (child.name !== "(" && child.name !== ")" && child.name !== ",") return child;
+      }
+      return null;
+    }
+    function readDefinition(definition) {
+      let next = definition.nextSibling;
+      let annotation = null;
+      let init = null;
+      if (next && next.name === "TypeAnnotation") {
+        annotation = next;
+        next = next.nextSibling;
+      }
+      if (next && next.name === "Equals") init = next.nextSibling;
+      return { kind: "variable", annotation, init, at: definition.from };
+    }
+    function collectDefinitions(parent, name2, ctx, found) {
+      for (let child = parent.firstChild; child; child = child.nextSibling) {
+        if (child.name === "VariableDefinition" && ctx.read(child) === name2) {
+          found.push(readDefinition(child));
+        }
+      }
+    }
+    function collectDeclarations(container, name2, ctx, found) {
+      for (let child = container.firstChild; child; child = child.nextSibling) {
+        switch (child.name) {
+          case "VariableDeclaration":
+            collectDefinitions(child, name2, ctx, found);
+            break;
+          case "ExportDeclaration":
+          case "ForSpec":
+            collectDeclarations(child, name2, ctx, found);
+            break;
+          case "FunctionDeclaration":
+          case "ClassDeclaration": {
+            const id2 = childNamed(child, "VariableDefinition");
+            if (id2 && ctx.read(id2) === name2) {
+              found.push({
+                kind: child.name === "FunctionDeclaration" ? "function" : "class",
+                node: child,
+                at: child.from
+              });
+            }
+            break;
+          }
+          case "ParamList":
+            collectDefinitions(child, name2, ctx, found);
+            break;
+          case "ForInSpec":
+          case "ForOfSpec": {
+            const before = found.length;
+            collectDefinitions(child, name2, ctx, found);
+            if (found.length > before) {
+              found[found.length - 1] = {
+                kind: child.name === "ForInSpec" ? "forIn" : "unknown",
+                at: child.from
+              };
+            }
+            break;
+          }
+          case "VariableDefinition":
+            if (container.name === "CatchClause" && ctx.read(child) === name2) {
+              found.push({ kind: "catch", at: child.from });
+            }
+            break;
+          default:
+        }
+      }
+    }
+    function findDeclaration(name2, fromNode, ctx) {
+      for (let container = fromNode.parent; container; container = container.parent) {
+        const found = [];
+        collectDeclarations(container, name2, ctx, found);
+        if (!found.length) continue;
+        let best = null;
+        for (const candidate of found) {
+          if (candidate.at <= fromNode.from && (!best || candidate.at > best.at)) best = candidate;
+        }
+        return best || found[0];
+      }
+      return null;
+    }
+    function typeNodeToDescriptor(typeNode, ctx) {
+      if (!typeNode) return null;
+      switch (typeNode.name) {
+        case "TypeName": {
+          const text = ctx.read(typeNode);
+          if (hasOwn(TS_KEYWORD_TYPES, text)) return instance(TS_KEYWORD_TYPES[text]);
+          const declaration = findDeclaration(text, typeNode, ctx);
+          if (declaration) {
+            return declaration.kind === "class" ? { kind: "class", node: declaration.node } : null;
+          }
+          return isBuiltinType(text) ? instance(text) : null;
+        }
+        case "ArrayType":
+          return instance("Array");
+        case "ParameterizedType":
+          return typeNodeToDescriptor(typeNode.firstChild, ctx);
+        default:
+          return null;
+      }
+    }
+    function annotationToDescriptor(annotation, ctx) {
+      return annotation ? typeNodeToDescriptor(annotation.lastChild, ctx) : null;
+    }
+    function descriptorFromValue(value, globalName) {
+      switch (typeof value) {
+        case "string":
+          return instance("String");
+        case "number":
+          return instance("Number");
+        case "boolean":
+          return instance("Boolean");
+        case "bigint":
+          return instance("BigInt");
+        case "symbol":
+          return instance("Symbol");
+        case "function":
+          return { kind: "value", value, globalName };
+        case "object":
+          if (value === null) return null;
+          return Array.isArray(value) ? instance("Array") : { kind: "value", value, globalName };
+        default:
+          return null;
+      }
+    }
+    function descriptorFromDeclaration(declaration, ctx) {
+      switch (declaration.kind) {
+        case "variable":
+          return annotationToDescriptor(declaration.annotation, ctx) || (declaration.init ? inferNode(declaration.init, ctx) : null);
+        case "function":
+          return instance("Function");
+        case "class":
+          return { kind: "classStatic", node: declaration.node };
+        case "forIn":
+          return instance("String");
+        case "catch":
+          return instance("Error");
+        default:
+          return null;
+      }
+    }
+    function inferVariable(node, ctx) {
+      const name2 = ctx.read(node);
+      const declaration = findDeclaration(name2, node, ctx);
+      if (declaration) return descriptorFromDeclaration(declaration, ctx);
+      return hasOwn(ctx.scope, name2) ? descriptorFromValue(ctx.scope[name2], name2) : null;
+    }
+    function inferThis(node) {
+      let member = null;
+      for (let current = node.parent; current; current = current.parent) {
+        if (current.name === "MethodDeclaration" || current.name === "PropertyDeclaration") {
+          member = current;
+        } else if (current.name === "ClassBody") {
+          const isStatic = member && childNamed(member, "static");
+          return { kind: isStatic ? "classStatic" : "class", node: current.parent };
+        } else if (current.name === "ObjectExpression") {
+          return { kind: "object", node: current };
+        }
+      }
+      return null;
+    }
+    function inferNew(node, ctx) {
+      const callee2 = childNamed(node, "VariableName");
+      if (!callee2) return null;
+      const name2 = ctx.read(callee2);
+      const declaration = findDeclaration(name2, callee2, ctx);
+      if (declaration) {
+        return declaration.kind === "class" ? { kind: "class", node: declaration.node } : null;
+      }
+      return hasOwn(ctx.scope, name2) && isBuiltinType(name2) ? instance(name2) : null;
+    }
+    function inferCall(node, ctx) {
+      const callee2 = node.firstChild;
+      if (!callee2) return null;
+      if (callee2.name === "VariableName") {
+        const name2 = ctx.read(callee2);
+        const declaration = findDeclaration(name2, callee2, ctx);
+        if (declaration) {
+          if (declaration.kind !== "function") return null;
+          return annotationToDescriptor(childNamed(declaration.node, "TypeAnnotation"), ctx);
+        }
+        return hasOwn(ctx.scope, name2) && hasOwn(GLOBAL_CALL_RETURNS, name2) ? instance(GLOBAL_CALL_RETURNS[name2]) : null;
+      }
+      if (callee2.name !== "MemberExpression" || !callee2.firstChild) return null;
+      const property = propertyNameOf(callee2, ctx);
+      if (!property) return null;
+      const receiver = inferNode(callee2.firstChild, ctx);
+      if (!receiver) return null;
+      if (receiver.kind === "instance") {
+        const { type } = receiver;
+        const returns = type === "Date" ? dateMethodReturn(property) : METHOD_RETURNS[type] && METHOD_RETURNS[type][property] || METHOD_RETURNS.Object && METHOD_RETURNS.Object[property];
+        return instance(returns);
+      }
+      if (receiver.kind === "value" && receiver.globalName && hasOwn(STATIC_RETURNS, receiver.globalName)) {
+        const table = STATIC_RETURNS[receiver.globalName];
+        const returns = hasOwn(table, property) ? table[property] : table["*"];
+        if (returns === "@arg0") {
+          const argument = firstArgument(node);
+          return argument ? inferNode(argument, ctx) : null;
+        }
+        return instance(returns);
+      }
+      return null;
+    }
+    function inferObjectKey(objectNode, key, ctx) {
+      for (let property = objectNode.firstChild; property; property = property.nextSibling) {
+        if (property.name !== "Property") continue;
+        const id2 = property.firstChild;
+        if (!id2 || id2.name !== "PropertyDefinition" || ctx.read(id2) !== key) continue;
+        if (childNamed(property, "ParamList")) return instance("Function");
+        const colon2 = id2.nextSibling;
+        if (colon2 && colon2.name === ":") return inferNode(colon2.nextSibling, ctx);
+        const declaration = findDeclaration(key, id2, ctx);
+        return declaration ? descriptorFromDeclaration(declaration, ctx) : null;
+      }
+      return null;
+    }
+    function inferClassField(classNode, key, wantStatic, ctx) {
+      const body = childNamed(classNode, "ClassBody");
+      if (!body) return null;
+      for (let member = body.firstChild; member; member = member.nextSibling) {
+        if (member.name !== "PropertyDeclaration" && member.name !== "MethodDeclaration") continue;
+        if (Boolean(childNamed(member, "static")) !== wantStatic) continue;
+        const id2 = childNamed(member, "PropertyDefinition");
+        if (!id2 || ctx.read(id2) !== key) continue;
+        if (member.name === "MethodDeclaration") return instance("Function");
+        const field = readDefinition(id2);
+        return annotationToDescriptor(field.annotation, ctx) || (field.init ? inferNode(field.init, ctx) : null);
+      }
+      return null;
+    }
+    function inferMember(node, ctx) {
+      const property = propertyNameOf(node, ctx);
+      if (!property || !node.firstChild) return null;
+      const receiver = inferNode(node.firstChild, ctx);
+      if (!receiver) return null;
+      switch (receiver.kind) {
+        case "instance":
+          return instance(PROPERTY_TYPES[receiver.type] && PROPERTY_TYPES[receiver.type][property]);
+        case "object":
+          return inferObjectKey(receiver.node, property, ctx);
+        case "class":
+          return inferClassField(receiver.node, property, false, ctx);
+        case "classStatic":
+          return inferClassField(receiver.node, property, true, ctx);
+        case "value": {
+          const descriptor = Object.getOwnPropertyDescriptor(receiver.value, property);
+          return descriptor && "value" in descriptor ? descriptorFromValue(descriptor.value) : null;
+        }
+        default:
+          return null;
+      }
+    }
+    function infer(node, ctx) {
+      switch (node.name) {
+        case "String":
+        case "TemplateString":
+          return instance("String");
+        case "Number":
+          return instance("Number");
+        case "BooleanLiteral":
+          return instance("Boolean");
+        case "RegExp":
+          return instance("RegExp");
+        case "ArrayExpression":
+          return instance("Array");
+        case "ArrowFunction":
+        case "FunctionExpression":
+          return instance("Function");
+        case "ObjectExpression":
+          return { kind: "object", node };
+        case "ParenthesizedExpression":
+          return inferNode(innerOf(node), ctx);
+        case "UnaryExpression":
+          return node.firstChild && node.firstChild.name === "typeof" ? instance("String") : null;
+        case "AwaitExpression": {
+          const awaited = inferNode(node.lastChild, ctx);
+          return awaited && awaited.kind === "instance" && awaited.type === "Promise" ? null : awaited;
+        }
+        case "this":
+          return inferThis(node);
+        case "VariableName":
+          return inferVariable(node, ctx);
+        case "NewExpression":
+          return inferNew(node, ctx);
+        case "CallExpression":
+          return inferCall(node, ctx);
+        case "MemberExpression":
+          return inferMember(node, ctx);
+        default:
+          return null;
+      }
+    }
+    function inferNode(node, ctx) {
+      if (!node || ctx.depth >= MAX_DEPTH) return null;
+      const key = `${node.name}:${node.from}:${node.to}`;
+      if (ctx.active.has(key)) return null;
+      ctx.active.add(key);
+      ctx.depth += 1;
+      try {
+        return infer(node, ctx);
+      } finally {
+        ctx.active.delete(key);
+        ctx.depth -= 1;
+      }
+    }
+    module.exports = {
+      createContext,
+      inferNode,
+      findDeclaration,
+      isBuiltinType,
+      childNamed
+    };
+  }
+});
+
+// packages/js-completion/members.js
+var require_members = __commonJS({
+  "packages/js-completion/members.js"(exports, module) {
+    var { HIDDEN_MEMBERS, HIDDEN_STATICS } = require_types();
+    var { findDeclaration, isBuiltinType, childNamed } = require_infer();
+    var IDENT = /^[A-Za-z_$][\w$]*$/;
+    function propertyKind(object, name2) {
+      let descriptor;
+      try {
+        descriptor = Object.getOwnPropertyDescriptor(object, name2);
+      } catch (_) {
+        return null;
+      }
+      if (!descriptor) return null;
+      return typeof descriptor.value === "function" ? "method" : "property";
+    }
+    var instanceCache = /* @__PURE__ */ new Map();
+    function instanceOptions(type) {
+      if (instanceCache.has(type)) return instanceCache.get(type);
+      const options = [];
+      const ctor = globalThis[type];
+      if (typeof ctor === "function" && ctor.prototype) {
+        const seen = /* @__PURE__ */ new Set();
+        let depth = 0;
+        for (let object = ctor.prototype; object; object = Object.getPrototypeOf(object)) {
+          for (const name2 of Object.getOwnPropertyNames(object)) {
+            if (seen.has(name2) || !IDENT.test(name2) || name2.startsWith("__") || HIDDEN_MEMBERS.has(name2)) continue;
+            const kind = propertyKind(object, name2);
+            if (!kind) continue;
+            seen.add(name2);
+            options.push({ label: name2, type: kind, boost: -depth });
+          }
+          depth += 1;
+        }
+      }
+      instanceCache.set(type, options);
+      return options;
+    }
+    var staticCache = /* @__PURE__ */ new WeakMap();
+    function staticOptions(value) {
+      if (staticCache.has(value)) return staticCache.get(value);
+      const isFunction = typeof value === "function";
+      const options = [];
+      for (const name2 of Object.getOwnPropertyNames(value)) {
+        if (!IDENT.test(name2) || isFunction && HIDDEN_STATICS.has(name2)) continue;
+        const kind = propertyKind(value, name2);
+        if (!kind) continue;
+        options.push({
+          label: name2,
+          type: kind === "method" && /^[A-Z]/.test(name2) ? "class" : kind
+        });
+      }
+      staticCache.set(value, options);
+      return options;
+    }
+    function literalOptions(objectNode, ctx) {
+      const options = [];
+      for (let property = objectNode.firstChild; property; property = property.nextSibling) {
+        if (property.name !== "Property") continue;
+        const id2 = property.firstChild;
+        if (!id2 || id2.name !== "PropertyDefinition") continue;
+        const colon2 = id2.nextSibling;
+        const value = colon2 && colon2.name === ":" ? colon2.nextSibling : null;
+        const isMethod = Boolean(childNamed(property, "ParamList")) || Boolean(value && (value.name === "ArrowFunction" || value.name === "FunctionExpression"));
+        options.push({ label: ctx.read(id2), type: isMethod ? "method" : "property", boost: 2 });
+      }
+      return options;
+    }
+    function classOptions(classNode, ctx, wantStatic, visited) {
+      if (visited.has(classNode.from)) return [];
+      visited.add(classNode.from);
+      const options = [];
+      const body = childNamed(classNode, "ClassBody");
+      if (body) {
+        for (let member = body.firstChild; member; member = member.nextSibling) {
+          if (member.name !== "PropertyDeclaration" && member.name !== "MethodDeclaration") continue;
+          if (Boolean(childNamed(member, "static")) !== wantStatic) continue;
+          const id2 = childNamed(member, "PropertyDefinition");
+          if (!id2) continue;
+          const label = ctx.read(id2);
+          if (label === "constructor") continue;
+          const accessor = childNamed(member, "get") || childNamed(member, "set");
+          options.push({
+            label,
+            type: member.name === "MethodDeclaration" && !accessor ? "method" : "property",
+            boost: 2
+          });
+        }
+      }
+      if (!wantStatic) {
+        let parent = null;
+        for (let child = classNode.firstChild; child; child = child.nextSibling) {
+          if (child.name === "extends") parent = child.nextSibling;
+        }
+        if (parent && parent.name === "VariableName") {
+          const name2 = ctx.read(parent);
+          const declaration = findDeclaration(name2, parent, ctx);
+          if (declaration && declaration.kind === "class") {
+            options.push(...classOptions(declaration.node, ctx, false, visited).map((option) => ({ ...option, boost: 1 })));
+          } else if (!declaration && isBuiltinType(name2)) {
+            options.push(...instanceOptions(name2));
+          }
+        }
+      }
+      return options;
+    }
+    function dedupe(options) {
+      const seen = /* @__PURE__ */ new Set();
+      return options.filter((option) => {
+        if (seen.has(option.label)) return false;
+        seen.add(option.label);
+        return true;
+      });
+    }
+    function membersOf(descriptor, ctx) {
+      switch (descriptor.kind) {
+        case "instance":
+          return instanceOptions(descriptor.type);
+        case "object":
+          return dedupe([...literalOptions(descriptor.node, ctx), ...instanceOptions("Object")]);
+        case "class":
+          return dedupe([...classOptions(descriptor.node, ctx, false, /* @__PURE__ */ new Set()), ...instanceOptions("Object")]);
+        case "classStatic":
+          return dedupe(classOptions(descriptor.node, ctx, true, /* @__PURE__ */ new Set()));
+        case "value":
+          return staticOptions(descriptor.value);
+        default:
+          return [];
+      }
+    }
+    module.exports = { membersOf, instanceOptions, staticOptions };
+  }
+});
+
+// packages/js-completion/completion.js
+var require_completion2 = __commonJS({
+  "packages/js-completion/completion.js"(exports, module) {
+    var { syntaxTree: syntaxTree2 } = (init_dist5(), __toCommonJS(dist_exports5));
+    var { DEFAULT_GLOBALS } = require_types();
+    var { createContext, inferNode } = require_infer();
+    var { membersOf } = require_members();
+    var IDENT = /^[\w$\xa1-￿][\w$\d\xa1-￿]*$/;
+    var DONT_COMPLETE = /* @__PURE__ */ new Set([
+      "TemplateString",
+      "String",
+      "RegExp",
+      "LineComment",
+      "BlockComment",
+      "VariableDefinition",
+      "TypeDefinition",
+      "Label",
+      "PropertyDefinition",
+      "PropertyName",
+      "PrivatePropertyDefinition",
+      "PrivatePropertyName",
+      "JSXText",
+      "JSXAttributeValue",
+      "JSXOpenTag",
+      "JSXCloseTag",
+      "JSXSelfClosingTag",
+      ".",
+      "?."
+    ]);
+    function resolveScope(globals) {
+      const source = globals == null ? DEFAULT_GLOBALS : globals;
+      if (!Array.isArray(source)) return source;
+      const scope = {};
+      for (const name2 of source) {
+        if (name2 in globalThis) scope[name2] = globalThis[name2];
+      }
+      return scope;
+    }
+    function globalOptions(scope) {
+      return Object.keys(scope).map((label) => {
+        const value = scope[label];
+        let type = "variable";
+        if (typeof value === "function") type = /^[A-Z]/.test(label) ? "class" : "function";
+        return { label, type };
+      });
+    }
+    function memberContext(inner, pos) {
+      if (inner.name === "PropertyName" && inner.parent && inner.parent.name === "MemberExpression") {
+        return { member: inner.parent, from: inner.from };
+      }
+      if ((inner.name === "." || inner.name === "?.") && inner.parent && inner.parent.name === "MemberExpression") {
+        return { member: inner.parent, from: pos };
+      }
+      if (inner.name === "MemberExpression") return { member: inner, from: pos };
+      return null;
+    }
+    function jsCompletionSource(config2 = {}) {
+      const scope = resolveScope(config2.globals);
+      const globals = globalOptions(scope);
+      return (context) => {
+        const { state, pos } = context;
+        const inner = syntaxTree2(state).resolveInner(pos, -1);
+        const access = memberContext(inner, pos);
+        if (access) {
+          const receiver = access.member.firstChild;
+          if (!receiver || receiver === inner) return null;
+          const descriptor = inferNode(receiver, createContext(state, scope));
+          if (!descriptor) return null;
+          const options = membersOf(descriptor, createContext(state, scope));
+          return options.length ? { from: access.from, options, validFor: IDENT } : null;
+        }
+        if (DONT_COMPLETE.has(inner.name)) return null;
+        const isWord = inner.name === "VariableName" || inner.to - inner.from < 20 && IDENT.test(state.sliceDoc(inner.from, inner.to));
+        if (!isWord && !context.explicit) return null;
+        return { from: isWord ? inner.from : pos, options: globals, validFor: IDENT };
+      };
+    }
+    module.exports = { jsCompletionSource, resolveScope };
+  }
+});
+
+// packages/js-completion/index.js
+var require_js_completion = __commonJS({
+  "packages/js-completion/index.js"(exports, module) {
+    var { jsCompletionSource, resolveScope } = require_completion2();
+    var { DEFAULT_GLOBALS } = require_types();
+    function createSupportExtension(jsLanguageSupport, config2) {
+      return jsLanguageSupport.language.data.of({
+        autocomplete: jsCompletionSource(config2)
+      });
+    }
+    module.exports = { createSupportExtension, jsCompletionSource, resolveScope, DEFAULT_GLOBALS };
+  }
+});
+
 // node_modules/codemirror/dist/index.js
 init_dist2();
 init_dist2();
@@ -30548,6 +31411,7 @@ var import_codemirror_lang_embed_sksl = __toESM(require_embed_sksl());
 var import_codemirror_lang_embed_icu_messageformat = __toESM(require_embed_icu_messageformat());
 var import_codemirror_lang_embed_tailwind = __toESM(require_embed_tailwind());
 var import_codemirror_lang_embed_react_native = __toESM(require_embed_react_native());
+var import_codemirror_lang_js_completion = __toESM(require_js_completion());
 var EMBEDS = [
   {
     id: "sql",
@@ -30596,6 +31460,12 @@ var EMBEDS = [
     label: "React Native completion",
     usage: "imports, JSX props, StyleSheet.create",
     support: (js) => (0, import_codemirror_lang_embed_react_native.createSupportExtension)(js)
+  },
+  {
+    id: "js-completion",
+    label: "JS globals & members",
+    usage: 'setTimeout, Math., "abc".trim(), [].map, this.',
+    support: (js) => (0, import_codemirror_lang_js_completion.createSupportExtension)(js)
   }
 ];
 var SAMPLE = `import {StyleSheet, Text, View} from 'react-native';
@@ -30660,6 +31530,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
+
+// JS completion: try typing after the dots, e.g. text.  words.  Math.  this.
+const text = '  Hello  ';
+const words = text.trim().split(' ');
+const cache = new Map();
+const point = {x: 1, y: 2, move() {}};
+class Counter {
+  items = [];
+  add(item) {
+    this.items.push(item);
+  }
+}
+setTimeout(() => cache.set('words', words), 100);
 
 // React Native completion: try typing inside <View style={{ or <Text \u2026
 export function App({count}) {

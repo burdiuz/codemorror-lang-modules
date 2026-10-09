@@ -14,6 +14,12 @@ CodeMirror `Language`/highlighting/completion support, each published independen
 | [`packages/icu-messageformat`](packages/icu-messageformat) | [`@actualwave/codemirror-lang-icu-messageformat`](https://www.npmjs.com/package/@actualwave/codemirror-lang-icu-messageformat) | ICU MessageFormat syntax support |
 | [`packages/react-native`](packages/react-native) | [`@actualwave/codemirror-lang-react-native`](https://www.npmjs.com/package/@actualwave/codemirror-lang-react-native) | React/React Native aware import & JSX completion |
 
+### Completion packages
+
+| Package | npm name | Description |
+| --- | --- | --- |
+| [`packages/js-completion`](packages/js-completion) | `@actualwave/codemirror-lang-js-completion` | Lightweight JavaScript completion: globals (`setTimeout`, `Math`) and type-inferred members after a dot (`"abc".trim`, `list.map`, `this.items`), with no TypeScript compiler or worker |
+
 ### Embed (tagged-template) packages
 
 Tag-embedding glue that highlights (and where noted, completes) a language inside
@@ -35,9 +41,7 @@ additionally peer-depend on their respective base grammar package above.
 | [`packages/embed-tailwind`](packages/embed-tailwind) | `@actualwave/codemirror-lang-embed-tailwind` | Tailwind class completion and category highlighting inside `tw` tagged templates |
 
 Unlike the base grammar packages, the embed packages are plain unbundled `index.js` +
-`package.json` (no build/test step) — they're currently workspace members of
-[`js-codemirror-package`](../js-codemirror-package) and not yet published to npm
-independently.
+`package.json` (no build/test step).
 
 ## Using the embeds
 
@@ -58,7 +62,7 @@ There are two kinds of embed packages:
 | Kind | Packages | Export | Provides |
 | --- | --- | --- | --- |
 | **Language embed** | `embed-sql`, `embed-css`, `embed-glsl`, `embed-sksl`, `embed-icu-messageformat`, `embed-graphql` | `createEmbedding(config?)` → `{ matcher, language, extension }` | a nested parser (highlighting) for matching tags, plus `extension` with the language's suggestions |
-| **Support embed** | `embed-tailwind`, `embed-react-native` | `createSupportExtension(embeddedJs, config?)` → extension | suggestions (and, for Tailwind, class coloring) layered on the JS parser; no nested language |
+| **Support embed** | `embed-tailwind`, `embed-react-native`, `js-completion` | `createSupportExtension(embeddedJs, config?)` → extension | suggestions (and, for Tailwind, class coloring) layered on the JS parser; no nested language |
 
 > **Highlighting and suggestions are separate.** `matcher` + `language` give highlighting.
 > **Suggestions only appear if you also add the embed's `extension` to the editor.** Leaving it
@@ -80,6 +84,7 @@ npm install @actualwave/codemirror-lang-embed-icu-messageformat @actualwave/code
 npm install @actualwave/codemirror-lang-embed-graphql @lezer/highlight @lezer/lr
 npm install @actualwave/codemirror-lang-embed-tailwind
 npm install @actualwave/codemirror-lang-embed-react-native @actualwave/codemirror-lang-react-native
+npm install @actualwave/codemirror-lang-js-completion
 ```
 
 `@codemirror/language`, `@codemirror/state`, `@codemirror/view`, `@codemirror/autocomplete` and
@@ -98,6 +103,7 @@ import { createEmbedding as createCss } from "@actualwave/codemirror-lang-embed-
 import { createEmbedding as createGraphql } from "@actualwave/codemirror-lang-embed-graphql"
 import { createSupportExtension as createTailwind } from "@actualwave/codemirror-lang-embed-tailwind"
 import { createSupportExtension as createReactNative } from "@actualwave/codemirror-lang-embed-react-native"
+import { createSupportExtension as createJsCompletion } from "@actualwave/codemirror-lang-js-completion"
 
 // 1. Create the language embeds (config is optional, see "Suggestions config" below)
 const embeds = [
@@ -121,6 +127,7 @@ const suggestions = embeds.map((embed) => embed.extension).filter(Boolean)
 const support = [
   createTailwind(embedded),
   createReactNative(embedded, { styleFactories: ["createStyles"] }),
+  createJsCompletion(embedded),
 ]
 
 // 6. Assemble one LanguageSupport and give it to the editor
@@ -157,6 +164,7 @@ Rules that matter:
 | `embed-icu-messageformat` | `` t`…` `` | single letter `t` |
 | `embed-tailwind` | `` tw`…` `` | not `className="…"` |
 | `embed-react-native` | no tag | works on ordinary JSX / imports / `StyleSheet.create` |
+| `js-completion` | no tag | works on ordinary JavaScript code |
 
 Tags are matched by name only, not resolved through imports. `${…}` interpolations and the
 backticks are excluded from the nested parse, so they never produce syntax errors. Bracket access
@@ -188,6 +196,7 @@ A matcher receives the tag as an array: `sql` → `['sql']`, `styled.View` → `
 | `embed-graphql` | none (highlighting, indentation, folding only) | add your own completion source, see below |
 | `embed-tailwind` | Tailwind utility class names by prefix | none; colors are themeable |
 | `embed-react-native` | imports, JSX tags and props, style properties and values | `createSupportExtension(embedded, config)`, see below |
+| `js-completion` | JS globals; members after a dot for strings, arrays, `Map`/`Set`/`Date`/`Promise`, object literals, classes and `this` | `createSupportExtension(embedded, { globals })`, see below |
 
 #### SQL: dialect, schema, upper-case keywords
 
@@ -263,6 +272,52 @@ Limits: the class list is static (not read from `tailwind.config`), arbitrary va
 `bg-[#123456]` are not completed or colored, and suggestions open as you type (or on `Ctrl-Space`
 for an empty word).
 
+#### JavaScript globals and members (`js-completion`)
+
+`@codemirror/lang-javascript` only suggests keywords, snippets and names declared in the file. It
+does not know `setTimeout`, `Math.max` or `"abc".toLowerCase`. `js-completion` adds them without
+the TypeScript compiler, a worker or a download, which suits Android WebViews and TV devices:
+
+```js
+const text = "  Hello  ";
+text.trim().split(" ").|       // Array methods: map, filter, join, …
+new Date().getTime().|         // Number methods: toFixed, …
+Math.|                         // PI, max, floor, …
+this.|                         // fields and methods of the enclosing class / object
+```
+
+- **After a dot**, the receiver is typed by a small inference over the syntax tree: literals,
+  `new X()`, variables (through their nearest declaration, parameters, `for … in`, `catch`),
+  method chains (via a table of return types such as `trim` → `String`, `split` → `Array`),
+  object literals, classes declared in the file (and their `extends`), `this`, TypeScript
+  annotations (`let a: string[]`), and global namespaces (`Math`, `JSON`, `Object`, `console`).
+  The member names come from the real prototype at runtime, so they match the engine.
+- **Elsewhere**, it suggests globals. The default list is the language built-ins plus timers and
+  a few web APIs (`setTimeout`, `fetch`, `URL`, `console` …). It does **not** include `window`
+  or `document`.
+- If the receiver can't be typed (imports, untyped parameters, destructuring, `Promise` results)
+  it suggests nothing rather than guessing.
+
+Config: `globals` is either a list of names read from `globalThis`, or a scope object of your own.
+
+```js
+import { DEFAULT_GLOBALS } from "@actualwave/codemirror-lang-js-completion"
+
+// defaults plus a few extra names
+createJsCompletion(embedded, { globals: [...DEFAULT_GLOBALS, "localStorage", "requestAnimationFrame"] })
+
+// only your scripting API; `app.` and `app.user.` complete from these objects
+createJsCompletion(embedded, {
+  globals: { Math, console, app: { version: "1.0", navigate() {}, user: { name: "x" } } },
+})
+```
+
+Names missing from the environment are skipped. Anything in `globals` is also known to the
+inference, so `new Map()` is understood only when `Map` is in the scope. It is a heuristic, not a
+type checker: there are no types across files or from imports, and assignments after the
+declaration aren't followed. Like the other support embeds, build it from the **wrapped** support
+(`embedded`).
+
 #### GraphQL: adding your own suggestions
 
 `embed-graphql` returns no `extension`, because GraphQL completion needs a schema. Supply your own
@@ -287,7 +342,7 @@ completion source: `createTagRegistry()`, `embedTaggedTemplates(js, registry)`,
 
 - **Highlighting works, no suggestions** – the embed's `extension` is not in the editor, or
   `autocompletion()` is not enabled.
-- **Tailwind / React Native suggestions never appear** – the support extension was built from the
+- **Tailwind / React Native / `js-completion` suggestions never appear** – the support extension was built from the
   plain `javascript()` support instead of `embedded`.
 - **Nothing is highlighted** – the editor uses `js.language` instead of `embedded.language`, or the
   embed was not registered (or its tag is not in the table above).

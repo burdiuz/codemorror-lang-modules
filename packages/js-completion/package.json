@@ -1,0 +1,52 @@
+{
+  "name": "@actualwave/codemirror-lang-js-completion",
+  "version": "0.1.0",
+  "description": "Lightweight JavaScript completion for CodeMirror 6: globals and type-inferred member suggestions (strings, arrays, Map/Set/Date/Promise, object literals, classes) with no TypeScript compiler or worker",
+  "keywords": [
+    "codemirror",
+    "codemirror6",
+    "javascript",
+    "autocomplete",
+    "completion"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "completion.js",
+    "infer.js",
+    "members.js",
+    "types.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burdiuz/codemorror-lang-modules.git",
+    "directory": "packages/js-completion"
+  },
+  "bugs": {
+    "url": "https://github.com/burdiuz/codemorror-lang-modules/issues"
+  },
+  "homepage": "https://github.com/burdiuz/codemorror-lang-modules/tree/main/packages/js-completion",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "@codemirror/autocomplete": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/state": "^6.0.0"
+  },
+  "devDependencies": {
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@jest/globals": "^30.0.0",
+    "jest": "^30.0.0"
+  },
+  "author": "Oleg Galaburda <burdiuz@gmail.com> (https://github.com/burdiuz)",
+  "publishConfig": {
+    "access": "public"
+  }
+}
