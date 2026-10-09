@@ -60,3 +60,22 @@ npm test --workspace=@actualwave/codemirror-lang-sksl
 
 To publish a package, `cd` into it and run `npm publish` as usual (each has its own
 `publishConfig`).
+
+## Demo
+
+[`docs/`](docs/) is an interactive CodeMirror page that loads the embed and grammar packages
+together. Edit the sample JS/TSX, and toggle each package on or off to see its highlighting and
+completion change. It is served from GitHub Pages at
+https://burdiuz.github.io/codemirror-lang-modules/ (once Pages is enabled for the `docs/` folder
+on `main`).
+
+To run it locally:
+
+```sh
+npm run build        # builds the base grammar packages into their dist/ folders
+npm run docs:build   # bundles docs/src/main.js into docs/assets/main.js
+npm run docs:serve   # serves docs/ at http://localhost:8080 (set PORT to change it)
+```
+
+Rerun `docs:build` after changing any package or the demo source. The bundle is committed, so
+Pages serves it without a build step.

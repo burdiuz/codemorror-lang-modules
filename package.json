@@ -7,8 +7,15 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "docs:build": "node docs/build.mjs",
+    "docs:serve": "node docs/serve.mjs"
   },
   "author": "Oleg Galaburda <burdiuz@gmail.com> (https://github.com/burdiuz)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@codemirror/lang-javascript": "^6.2.5",
+    "codemirror": "^6.0.2",
+    "esbuild": "^0.28.2"
+  }
 }
