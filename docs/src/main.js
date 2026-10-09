@@ -2,6 +2,7 @@ import {EditorView, basicSetup} from 'codemirror'
 import {Compartment} from '@codemirror/state'
 import {LanguageSupport} from '@codemirror/language'
 import {javascript} from '@codemirror/lang-javascript'
+import {demoTheme} from './theme.js'
 import {createTagRegistry, embedTaggedTemplates} from '@actualwave/codemirror-lang-embed-core'
 import {createEmbedding as createSqlEmbedding} from '@actualwave/codemirror-lang-embed-sql'
 import {createEmbedding as createCssEmbedding} from '@actualwave/codemirror-lang-embed-css'
@@ -145,11 +146,14 @@ const languageCompartment = new Compartment()
 function buildLanguageSupport() {
   const js = javascript({jsx: true, typescript: true})
   const registry = createTagRegistry()
+  const tagExtensions = []
 
   for (const embed of EMBEDS) {
     if (!enabled.has(embed.id) || !embed.tag) continue
-    const {matcher, language} = embed.tag()
+    const {matcher, language, extension} = embed.tag()
     registry.register(matcher, language)
+    // Carries the nested language's completion/language data (e.g. SQL keywords).
+    if (extension) tagExtensions.push(extension)
   }
 
   // Support extensions read language data off the wrapped language, so they
@@ -161,12 +165,12 @@ function buildLanguageSupport() {
     extensions.push(embed.support(embedded))
   }
 
-  return new LanguageSupport(embedded.language, [embedded.support, extensions])
+  return new LanguageSupport(embedded.language, [embedded.support, tagExtensions, extensions])
 }
 
 const view = new EditorView({
   doc: SAMPLE,
-  extensions: [basicSetup, languageCompartment.of(buildLanguageSupport())],
+  extensions: [basicSetup, demoTheme, languageCompartment.of(buildLanguageSupport())],
   parent: document.getElementById('editor'),
 })
 

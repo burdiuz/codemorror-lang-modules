@@ -30444,6 +30444,100 @@ var autoCloseTags = /* @__PURE__ */ EditorView.inputHandler.of((view2, from, to,
   return true;
 });
 
+// docs/src/theme.js
+init_dist2();
+init_dist5();
+init_dist4();
+var editorTheme = EditorView.theme({
+  "&": {
+    color: "var(--text)",
+    backgroundColor: "var(--panel)"
+  },
+  ".cm-content": { caretColor: "var(--text)" },
+  ".cm-cursor, .cm-dropCursor": { borderLeftColor: "var(--text)" },
+  "&.cm-focused": { outline: "none" },
+  ".cm-gutters": {
+    backgroundColor: "var(--panel)",
+    color: "var(--muted)",
+    border: "none",
+    borderRight: "1px solid var(--border)"
+  },
+  ".cm-activeLine": { backgroundColor: "var(--active-line)" },
+  ".cm-activeLineGutter": { backgroundColor: "var(--active-line)", color: "var(--text)" },
+  "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": { backgroundColor: "var(--selection)" },
+  ".cm-selectionMatch": { backgroundColor: "var(--selection-match)" },
+  "&.cm-focused .cm-matchingBracket": { backgroundColor: "var(--selection-match)", outline: "1px solid var(--border)" },
+  ".cm-foldPlaceholder": {
+    backgroundColor: "var(--bg)",
+    border: "1px solid var(--border)",
+    color: "var(--muted)"
+  },
+  // Panels & search
+  ".cm-panels": { backgroundColor: "var(--panel)", color: "var(--text)" },
+  ".cm-panels.cm-panels-top": { borderBottom: "1px solid var(--border)" },
+  ".cm-panels.cm-panels-bottom": { borderTop: "1px solid var(--border)" },
+  ".cm-textfield": {
+    backgroundColor: "var(--bg)",
+    color: "var(--text)",
+    border: "1px solid var(--border)"
+  },
+  ".cm-button": {
+    backgroundImage: "none",
+    backgroundColor: "var(--bg)",
+    color: "var(--text)",
+    border: "1px solid var(--border)"
+  },
+  ".cm-searchMatch": { backgroundColor: "var(--selection-match)" },
+  ".cm-searchMatch-selected": { backgroundColor: "var(--selection)" },
+  // Tooltips & autocompletion
+  ".cm-tooltip": {
+    backgroundColor: "var(--panel)",
+    color: "var(--text)",
+    border: "1px solid var(--border)",
+    borderRadius: "6px",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.18)",
+    overflow: "hidden"
+  },
+  ".cm-tooltip-autocomplete > ul": {
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+    fontSize: "12.5px",
+    maxHeight: "16em"
+  },
+  ".cm-tooltip-autocomplete > ul > li": { padding: "2px 10px", lineHeight: "1.6" },
+  ".cm-tooltip-autocomplete > ul > li[aria-selected]": {
+    backgroundColor: "var(--accent)",
+    color: "var(--accent-text)"
+  },
+  ".cm-completionMatchedText": { textDecoration: "none", fontWeight: "700", color: "var(--accent)" },
+  ".cm-tooltip-autocomplete > ul > li[aria-selected] .cm-completionMatchedText": { color: "inherit" },
+  ".cm-completionDetail": { color: "var(--muted)", fontStyle: "normal", marginLeft: "0.8em" },
+  ".cm-tooltip-autocomplete > ul > li[aria-selected] .cm-completionDetail": { color: "inherit", opacity: 0.8 },
+  ".cm-completionIcon": { opacity: 0.7 },
+  ".cm-tooltip.cm-completionInfo": { padding: "6px 10px" }
+});
+var highlightStyle = HighlightStyle.define([
+  { tag: [tags.keyword, tags.operatorKeyword, tags.modifier], color: "var(--syn-keyword)" },
+  { tag: [tags.controlKeyword, tags.moduleKeyword], color: "var(--syn-keyword)" },
+  { tag: [tags.name, tags.deleted, tags.character, tags.macroName], color: "var(--text)" },
+  { tag: [tags.variableName, tags.propertyName], color: "var(--syn-variable)" },
+  { tag: [tags.function(tags.variableName), tags.function(tags.propertyName), tags.labelName], color: "var(--syn-function)" },
+  { tag: [tags.definition(tags.variableName), tags.definition(tags.propertyName)], color: "var(--syn-definition)" },
+  { tag: [tags.typeName, tags.className, tags.namespace], color: "var(--syn-type)" },
+  { tag: [tags.number, tags.bool, tags.null, tags.atom, tags.self], color: "var(--syn-number)" },
+  { tag: [tags.string, tags.special(tags.string), tags.regexp, tags.inserted], color: "var(--syn-string)" },
+  { tag: [tags.color, tags.constant(tags.name), tags.standard(tags.name)], color: "var(--syn-number)" },
+  { tag: [tags.operator, tags.punctuation, tags.separator, tags.bracket], color: "var(--syn-punct)" },
+  { tag: [tags.comment, tags.lineComment, tags.blockComment], color: "var(--muted)", fontStyle: "italic" },
+  { tag: [tags.tagName, tags.angleBracket], color: "var(--syn-tag)" },
+  { tag: tags.attributeName, color: "var(--syn-function)" },
+  { tag: [tags.meta, tags.processingInstruction], color: "var(--syn-punct)" },
+  { tag: tags.invalid, color: "var(--syn-invalid)" },
+  { tag: tags.heading, fontWeight: "bold" },
+  { tag: tags.emphasis, fontStyle: "italic" },
+  { tag: tags.strong, fontWeight: "bold" }
+]);
+var demoTheme = [editorTheme, syntaxHighlighting(highlightStyle)];
+
 // docs/src/main.js
 var import_codemirror_lang_embed_core = __toESM(require_embed_core());
 var import_codemirror_lang_embed_sql = __toESM(require_embed_sql());
@@ -30581,10 +30675,12 @@ var languageCompartment = new Compartment();
 function buildLanguageSupport() {
   const js = javascript({ jsx: true, typescript: true });
   const registry = (0, import_codemirror_lang_embed_core.createTagRegistry)();
+  const tagExtensions = [];
   for (const embed of EMBEDS) {
     if (!enabled.has(embed.id) || !embed.tag) continue;
-    const { matcher: matcher2, language: language2 } = embed.tag();
+    const { matcher: matcher2, language: language2, extension } = embed.tag();
     registry.register(matcher2, language2);
+    if (extension) tagExtensions.push(extension);
   }
   const embedded = (0, import_codemirror_lang_embed_core.embedTaggedTemplates)(js, registry);
   const extensions = [];
@@ -30592,11 +30688,11 @@ function buildLanguageSupport() {
     if (!enabled.has(embed.id) || !embed.support) continue;
     extensions.push(embed.support(embedded));
   }
-  return new LanguageSupport(embedded.language, [embedded.support, extensions]);
+  return new LanguageSupport(embedded.language, [embedded.support, tagExtensions, extensions]);
 }
 var view = new EditorView({
   doc: SAMPLE,
-  extensions: [basicSetup, languageCompartment.of(buildLanguageSupport())],
+  extensions: [basicSetup, demoTheme, languageCompartment.of(buildLanguageSupport())],
   parent: document.getElementById("editor")
 });
 function renderToggles() {
